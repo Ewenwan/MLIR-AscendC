@@ -1,0 +1,10 @@
+add_mlir_dialect(AscendC ascendc)
+add_mlir_doc(AscendC AscendC Dialects/ -gen-dialect-doc)
+
+set(LLVM_TARGET_DEFINITIONS AscendCAttributes.td)
+mlir_tablegen(AscendCAttributes.h.inc -gen-attrdef-decls -attrdefs-dialect=ascendc)
+mlir_tablegen(AscendCAttributes.cpp.inc -gen-attrdef-defs -attrdefs-dialect=ascendc)
+mlir_tablegen(AscendCEnums.h.inc -gen-enum-decls)
+mlir_tablegen(AscendCEnums.cpp.inc -gen-enum-defs)
+add_public_tablegen_target(MLIRAscendCAttributesIncGen)
+add_dependencies(mlir-headers MLIRAscendCAttributesIncGen)
