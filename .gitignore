@@ -1,0 +1,9 @@
+# Build directory.
+/build*
+
+# VSCode configuration files.
+.vscode
+
+# clangd index.
+.clangd/
+.cache

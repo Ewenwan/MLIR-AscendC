@@ -23,7 +23,7 @@ void registerAscendCToCppTranslation();
 inline void registerAllTranslations() {
 
   static bool initOnce = []() {
-  // AscendC translation
+    // AscendC translation
     registerAscendCToCppTranslation();
 
     return true;

@@ -20,9 +20,7 @@ namespace mlir_ascendc {
 
 // This function may be called to register the ascendc-specific MLIR passes with
 // the global registry.
-inline void registerAllPasses() {
-  mlir::ascendc::registerAscendCPasses();
-}
+inline void registerAllPasses() { mlir::ascendc::registerAscendCPasses(); }
 
 } // namespace mlir_ascendc
 

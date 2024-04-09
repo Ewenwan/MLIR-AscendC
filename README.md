@@ -11,9 +11,9 @@ Build MLIR AscendC as part of the LLVM Project with mlir enabled via the `LLVM_E
 ```sh
 mkdir build && cd build
 
-cmake -G Ninja ../externals/llvm/llvm \
+cmake -G Ninja ../externals/llvm-project/llvm \
     -DLLVM_ENABLE_PROJECTS=mlir \
-    -DLLVM_EXTERNAL_PROJECTS=mlir-ascendc -DLLVM_EXTERNAL_MLIR_ASCENDC_SOURCE_DIR=../mlir-ascendc \
+    -DLLVM_EXTERNAL_PROJECTS=mlir-ascendc -DLLVM_EXTERNAL_MLIR_ASCENDC_SOURCE_DIR=.. \
     -DLLVM_BUILD_EXAMPLES=ON \
     -DLLVM_TARGETS_TO_BUILD="host" \
     -DCMAKE_BUILD_TYPE=Release \
