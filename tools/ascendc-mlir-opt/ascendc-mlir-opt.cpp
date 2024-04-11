@@ -16,7 +16,6 @@
 #include "mlir/InitAllDialects.h"
 #include "mlir/InitAllPasses.h"
 #include "mlir/Tools/mlir-opt/MlirOptMain.h"
-#include "llvm/Support/InitLLVM.h"
 
 int main(int argc, char **argv) {
   // Register dialects.

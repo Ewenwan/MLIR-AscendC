@@ -10,7 +10,7 @@ add_mlir_dialect_library(MLIRAscendCTransforms
   LINK_LIBS PUBLIC
   MLIRAnalysis
   MLIRArithDialect
-  MLIRAscendC
+  MLIRAscendCDialect
   MLIRIR
   MLIRPass
   MLIRSCFDialect

@@ -14,13 +14,17 @@
 #ifndef MLIRASCENDC_INITALLPASSES_H_
 #define MLIRASCENDC_INITALLPASSES_H_
 
+#include "mlir-ascendc/Conversion/AscendCConversionPasses.h"
 #include "mlir-ascendc/Dialect/AscendC/Transforms/Passes.h"
 
 namespace mlir_ascendc {
 
 // This function may be called to register the ascendc-specific MLIR passes with
 // the global registry.
-inline void registerAllPasses() { mlir::ascendc::registerAscendCPasses(); }
+inline void registerAllPasses() {
+  mlir_ascendc::registerConversionPasses();
+  mlir::ascendc::registerAscendCPasses();
+}
 
 } // namespace mlir_ascendc
 

@@ -1,4 +1,4 @@
-add_mlir_dialect_library(MLIRAscendC
+add_mlir_dialect_library(MLIRAscendCDialect
   AscendC.cpp
 
   ADDITIONAL_HEADER_DIRS

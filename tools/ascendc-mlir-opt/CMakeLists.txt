@@ -1,6 +1,8 @@
 set(ASCEND_LIBS
-  MLIRAscendC
+  MLIRAscendCDialect
   MLIRAscendCTransforms
+  MLIRAscendCTransformOps
+  MLIRAscendCToEmitC
 )
 
 set(LIBS

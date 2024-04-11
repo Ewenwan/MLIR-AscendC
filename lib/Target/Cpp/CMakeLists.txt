@@ -7,7 +7,7 @@ add_mlir_translation_library(MLIRAscendCToCpp
 
     LINK_LIBS PUBLIC
     MLIRArithDialect
-    MLIRAscendC
+    MLIRAscendCDialect
     MLIRFuncDialect
     MLIRIR
     MLIRSCFDialect
