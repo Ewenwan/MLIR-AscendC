@@ -10,14 +10,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef ASCENDC_ATTRIBUTES
-#define ASCENDC_ATTRIBUTES
+#ifndef MLIRASCENDC_DIALECT_ASCENDC_IR_ASCENDCATTRIBUTES
+#define MLIRASCENDC_DIALECT_ASCENDC_IR_ASCENDCATTRIBUTES
 
+include "mlir-ascendc/Dialect/AscendC/IR/AscendCBase.td"
 include "mlir/IR/AttrTypeBase.td"
 include "mlir/IR/BuiltinAttributes.td"
 include "mlir/IR/EnumAttr.td"
 include "mlir/Dialect/SCF/IR/DeviceMappingInterface.td"
-include "mlir-ascendc/Dialect/AscendC/IR/AscendCBase.td"
 
 //===----------------------------------------------------------------------===//
 // Attribute Declarations
@@ -34,8 +34,9 @@ class AscendC_I32Enum<string name, string description, list<I32EnumAttrCase> cas
   let cppNamespace = "::mlir::ascendc";
 }
 
-class AscendC_I32EnumAttr<string mnemonic, AscendC_I32Enum enumInfo> :
-    EnumAttr<AscendC_Dialect, enumInfo, mnemonic> {
+class AscendC_I32EnumAttr<string mnemonic, AscendC_I32Enum enumInfo,
+               list <Trait> traits = []> :
+    EnumAttr<AscendC_Dialect, enumInfo, mnemonic, traits> {
   let assemblyFormat = "`<` $value `>`";
 }
 
@@ -82,7 +83,8 @@ def AscendC_TPosition_Enum : AscendC_I32Enum<
     TPosition_MAX
   ]>;
 
-def AscendC_TPosition_Attr : AscendC_I32EnumAttr<"TPosition", AscendC_TPosition_Enum>  {
+def AscendC_TPosition_Attr : AscendC_I32EnumAttr<"TPosition", AscendC_TPosition_Enum,
+    [DeclareAttrInterfaceMethods<DeviceMappingAttrInterface>]> {
   let description = [{
     Use TPosition to abstract real physical hardware to manage different
     levels of physical memory. GM is Global Memory, VECIN/VECCALC/VECOUT
@@ -127,4 +129,4 @@ def AscendC_Hardware_Attr : AscendC_I32EnumAttr<"Hardware", AscendC_Hardware_Enu
   }];
 }
 
-#endif // ASCENDC_ATTRIBUTES
+#endif // MLIRASCENDC_DIALECT_ASCENDC_IR_ASCENDCATTRIBUTES

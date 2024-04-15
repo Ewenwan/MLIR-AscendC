@@ -29,6 +29,11 @@ def AscendC_Dialect : Dialect {
   let summary = [{
     This dialect provides an representation of AscendC language operations.
   }];
+
+  let extraClassDeclaration = [{
+    /// Returns the numeric value used to identify the TPosition.
+    static TPosition getVecinTPosition() { return TPosition::VECIN; }
+  }];
 }
 
 #endif // MLIRASCENDC_DIALECT_ASCENDC_IR_ASCENDC_BASE

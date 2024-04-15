@@ -57,6 +57,26 @@ void ascendc::AscendCDialect::initialize() {
 #define GET_ATTRDEF_CLASSES
 #include "mlir-ascendc/Dialect/AscendC/IR/AscendCAttributes.cpp.inc"
 
+//----------------------------------------------------------------------------//
+// AscendC Device Mapping Attributes
+//----------------------------------------------------------------------------//
+
+int64_t TPositionAttr::getMappingId() const {
+  if (getValue() == ascendc::TPosition::VECIN ||
+      getValue() == ascendc::TPosition::VECCALC ||
+      getValue() == ascendc::TPosition::VECOUT)
+    return static_cast<int64_t>(ascendc::TPosition::VECIN);
+  return static_cast<int64_t>(getValue());
+}
+
+bool TPositionAttr::isLinearMapping() const {
+  llvm_unreachable("TPositionAttr does not support linear mapping");
+}
+
+int64_t TPositionAttr::getRelativeIndex() const {
+  llvm_unreachable("TPositionAttr does not support relative index");
+}
+
 //===----------------------------------------------------------------------===//
 // AscendC Types
 //===----------------------------------------------------------------------===//
