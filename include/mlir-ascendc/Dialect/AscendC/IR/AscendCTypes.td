@@ -13,10 +13,10 @@
 #ifndef MLIRASCENDC_DIALECT_ASCENDC_IR_ASCENDCTYPES
 #define MLIRASCENDC_DIALECT_ASCENDC_IR_ASCENDCTYPES
 
+include "mlir-ascendc/Dialect/AscendC/IR/AscendCBase.td"
 include "mlir/IR/AttrTypeBase.td"
 include "mlir/IR/BuiltinTypeInterfaces.td"
 include "mlir/IR/BuiltinTypes.td"
-include "mlir-ascendc/Dialect/AscendC/IR/AscendCBase.td"
 
 //===----------------------------------------------------------------------===//
 // Type Declarations
@@ -93,8 +93,7 @@ def AscendC_GMADDR : AscendC_Type<"GM_ADDR", "GM_ADDR"> {
 //===----------------------------------------------------------------------===//
 
 class AscendC_TensorType<string typeName, string typeMnemonic, list<Trait> traits = []>
-    : AscendC_Type<typeName, typeMnemonic, traits> {
-    // TODO: consider !listconcat([ShapedTypeInterface], traits) in the future
+    : AscendC_Type<typeName, typeMnemonic, !listconcat([ShapedTypeInterface], traits)> {
 
   let parameters = (ins
     ArrayRefParameter<"int64_t">:$shape,
@@ -116,12 +115,24 @@ def AscendC_LocalTensor : AscendC_TensorType<"LocalTensor", "LocalTensor"> {
     LocalTensor is used to store data inside local memory of AI core.
     Supported QuePosition: VECIN, VECOUT, A1, A2, B1, B2, CO1, CO2.
   }];
+  let extraClassDeclaration = [{
+    bool hasRank() const { return true; }
+
+    LocalTensorType cloneWith(std::optional<ArrayRef<int64_t>> shape,
+                         Type elementType) const;
+  }];
   let hasCustomAssemblyFormat = 1;
 }
 
 def AscendC_GlobalTensor : AscendC_TensorType<"GlobalTensor", "GlobalTensor"> {
   let summary = "AscendC GlobalTensor";
   let description = [{GlobalTensor is used to store data on global memory.}];
+  let extraClassDeclaration = [{
+    bool hasRank() const { return true; }
+
+    GlobalTensorType cloneWith(std::optional<ArrayRef<int64_t>> shape,
+                         Type elementType) const;
+  }];
   let hasCustomAssemblyFormat = 1;
 }
 

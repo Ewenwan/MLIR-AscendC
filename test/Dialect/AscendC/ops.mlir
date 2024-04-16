@@ -31,13 +31,18 @@ func.func @createGlobalTensor(%z: !ascendc.GM_ADDR, %offset: i32, %block_len: i3
 }
 
 // CHECK-LABEL: func @dataCopy_gm2ub
-func.func @dataCopy_gm2ub(%xGm: !ascendc.GlobalTensor<16xf32>, %gm_offset: i32, %xLocal: !ascendc.LocalTensor<16xf32>, %tile_length: i32) {
+func.func @dataCopy_gm2ub(%x: !ascendc.GM_ADDR, %offset: i32, %block_len: i32, %tile_length: i32, %gm_offset: i32) {
+    %xGm = ascendc.create_global_tensor %x, %block_len, %offset : !ascendc.GM_ADDR -> !ascendc.GlobalTensor<16xf32>
+    %pipe = ascendc.create_pipe : !ascendc.TPipe
+    %inQueueX = ascendc.create_queue %pipe, %tile_length : !ascendc.TPipe -> !ascendc.TQue<VECIN, 2>
+    %xLocal = ascendc.alloc_tensor(%inQueueX) : !ascendc.TQue<VECIN, 2> -> !ascendc.LocalTensor<16xf32>
     ascendc.data_copy %xLocal, %xGm[%gm_offset], %tile_length: !ascendc.GlobalTensor<16xf32> to !ascendc.LocalTensor<16xf32>
     return
 }
 
 // CHECK-LABEL: func @dataCopy_ub2gm
-func.func @dataCopy_ub2gm(%xGm: !ascendc.GlobalTensor<16xf32>, %gm_offset: i32, %xLocal: !ascendc.LocalTensor<16xf32>, %tile_length: i32) {
+func.func @dataCopy_ub2gm(%xGm: !ascendc.GlobalTensor<16xf32>, %inQueueX: !ascendc.TQue<VECOUT, 2>, %tile_length: i32, %gm_offset: i32) {
+    %xLocal = ascendc.deque(%inQueueX) : !ascendc.TQue<VECOUT, 2> -> !ascendc.LocalTensor<16xf32>
     ascendc.data_copy %xGm[%gm_offset], %xLocal, %tile_length: !ascendc.LocalTensor<16xf32> to !ascendc.GlobalTensor<16xf32>
     return
 }

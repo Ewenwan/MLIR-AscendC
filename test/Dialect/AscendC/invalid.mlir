@@ -1,4 +1,4 @@
-// RUN: ascendc-mlir-opt  %s -ascendc-test-legality -verify-diagnostics
+// RUN: ascendc-mlir-opt  %s -verify-diagnostics
 
 func.func @Add_Custom(%x : !ascendc.GM_ADDR, %y : !ascendc.GM_ADDR, %z : !ascendc.GM_ADDR) {
 // Compute Offset
@@ -34,7 +34,7 @@ func.func @Add_Custom(%x : !ascendc.GM_ADDR, %y : !ascendc.GM_ADDR, %z : !ascend
         %xLocal = ascendc.alloc_tensor(%inQueueX) : !ascendc.TQue<VECIN, 2> -> !ascendc.LocalTensor<16xf32>
         %yLocal = ascendc.alloc_tensor(%inQueueY) : !ascendc.TQue<A2, 2> -> !ascendc.LocalTensor<16xf32>
         ascendc.data_copy %xLocal, %xGm[%gm_offset], %tile_length : !ascendc.GlobalTensor<16xf32> to !ascendc.LocalTensor<16xf32>
-        // expected-error @below{{unsupported data copy path}}
+        // expected-error @below{{'ascendc.data_copy' op unsupported data copy path}}
         ascendc.data_copy %yLocal, %yGm[%gm_offset], %tile_length : !ascendc.GlobalTensor<16xf32> to !ascendc.LocalTensor<16xf32>
 
         // Compute

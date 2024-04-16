@@ -7,4 +7,6 @@ mlir_tablegen(AscendCAttributes.cpp.inc -gen-attrdef-defs -attrdefs-dialect=asce
 mlir_tablegen(AscendCEnums.h.inc -gen-enum-decls)
 mlir_tablegen(AscendCEnums.cpp.inc -gen-enum-defs)
 add_public_tablegen_target(MLIRAscendCAttributesIncGen)
+add_public_tablegen_target(MLIRAscendCEnumsIncGen)
 add_dependencies(mlir-headers MLIRAscendCAttributesIncGen)
+add_dependencies(mlir-headers MLIRAscendCEnumsIncGen)

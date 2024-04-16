@@ -206,6 +206,7 @@ def DataCopyOp : AscendC_Op<"data_copy",
       " $dstTensor (`[` $dstOffset^ `]`)? `,` $srcTensor (`[` $srcOffset^ `]`)?"
       " `,` $tile_length attr-dict `:` qualified(type($srcTensor)) `to`"
       " qualified(type($dstTensor))";
+    let hasVerifier = 1;
 }
 
 def DuplicateOp : AscendC_Op<"duplicate"> {

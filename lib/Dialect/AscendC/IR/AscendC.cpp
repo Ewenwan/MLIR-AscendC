@@ -1,4 +1,4 @@
-//===- AscendC.cpp - AscendC ops implementation ---------------------------===//
+//===-------------- AscendC.cpp - AscendC ops implementation --------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -17,6 +17,47 @@ using namespace mlir;
 using namespace mlir::ascendc;
 
 #include "mlir-ascendc/Dialect/AscendC/IR/AscendCDialect.cpp.inc"
+
+static TPosition getTensorTposition(Value tensor) {
+  if (dyn_cast<GlobalTensorType>(tensor.getType()))
+    return TPosition::GM;
+  if (auto allocTensor = dyn_cast<AllocTensorOp>(tensor.getDefiningOp()))
+    return allocTensor.getQueue().getType().getTposition();
+  if (auto dequeOp = dyn_cast<DequeOp>(tensor.getDefiningOp()))
+    return dequeOp.getQueue().getType().getTposition();
+  return TPosition::MAX;
+}
+
+LogicalResult DataCopyOp::verify() {
+  TPosition dstPosition = getTensorTposition(getDstTensor());
+  TPosition srcPosition = getTensorTposition(getSrcTensor());
+
+  // Unfound TPosition
+  if (dstPosition == TPosition::MAX || srcPosition == TPosition::MAX) {
+    return emitOpError("unfound TPosition");
+  }
+
+  // Supported: GM->A1, GM->B1, GM->VECIN
+  if (srcPosition == TPosition::GM) {
+    if (dstPosition == TPosition::A1 || dstPosition == TPosition::B1 ||
+        dstPosition == TPosition::VECIN) {
+      return success();
+    }
+  }
+  // Supported: CO2->GM, VECOUT->GM
+  if (dstPosition == TPosition::GM) {
+    if (srcPosition == TPosition::CO2 || srcPosition == TPosition::VECOUT) {
+      return success();
+    }
+  }
+  // Supported: CO1->CO2, VECIN->VECOUT
+  if (srcPosition == TPosition::CO1 && dstPosition == TPosition::CO2)
+    return success();
+  if (srcPosition == TPosition::VECIN && dstPosition == TPosition::VECOUT)
+    return success();
+
+  return emitOpError("unsupported data copy path");
+}
 
 //===----------------------------------------------------------------------===//
 // AscendCDialect
@@ -84,9 +125,9 @@ int64_t TPositionAttr::getRelativeIndex() const {
 #define GET_TYPEDEF_CLASSES
 #include "mlir-ascendc/Dialect/AscendC/IR/AscendCTypes.cpp.inc"
 
-//===----------------------------------------------------------------------===//
+//----------------------------------------------------------------------------//
 // AscendC BaseTensor Types
-//===----------------------------------------------------------------------===//
+//----------------------------------------------------------------------------//
 
 Type parseTensorType(AsmParser &parser, bool localTensor) {
   if (parser.parseLess())
@@ -131,9 +172,9 @@ static void printTensorType(AsmPrinter &printer, ArrayRef<int64_t> tensorShape,
   printer << ">";
 }
 
-//===----------------------------------------------------------------------===//
+//----------------------------------------------------------------------------//
 // LocalTensor Type
-//===----------------------------------------------------------------------===//
+//----------------------------------------------------------------------------//
 
 Type LocalTensorType::parse(AsmParser &parser) {
   return parseTensorType(parser, /*localTensor=*/true);
@@ -143,9 +184,15 @@ void LocalTensorType::print(AsmPrinter &printer) const {
   printTensorType(printer, getShape(), getElementType());
 }
 
-//===----------------------------------------------------------------------===//
+LocalTensorType
+LocalTensorType::cloneWith(std::optional<ArrayRef<int64_t>> shape,
+                           Type elementType) const {
+  return LocalTensorType::get(shape.value_or(getShape()), elementType);
+}
+
+//----------------------------------------------------------------------------//
 // GlobalTensor Type
-//===----------------------------------------------------------------------===//
+//----------------------------------------------------------------------------//
 
 Type GlobalTensorType::parse(AsmParser &parser) {
   return parseTensorType(parser, /*localTensor=*/false);
@@ -153,4 +200,10 @@ Type GlobalTensorType::parse(AsmParser &parser) {
 
 void GlobalTensorType::print(AsmPrinter &printer) const {
   printTensorType(printer, getShape(), getElementType());
+}
+
+GlobalTensorType
+GlobalTensorType::cloneWith(std::optional<ArrayRef<int64_t>> shape,
+                            Type elementType) const {
+  return GlobalTensorType::get(shape.value_or(getShape()), elementType);
 }
