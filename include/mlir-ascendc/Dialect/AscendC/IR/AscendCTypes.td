@@ -129,7 +129,7 @@ def AscendC_GlobalTensor : AscendC_TensorType<"GlobalTensor", "GlobalTensor"> {
   let description = [{GlobalTensor is used to store data on global memory.}];
   let extraClassDeclaration = [{
     bool hasRank() const { return true; }
-
+aln
     GlobalTensorType cloneWith(std::optional<ArrayRef<int64_t>> shape,
                          Type elementType) const;
   }];

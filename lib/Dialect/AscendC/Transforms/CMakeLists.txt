@@ -1,5 +1,9 @@
 add_mlir_dialect_library(MLIRAscendCTransforms
-  AscendCTestLegality.cpp
+  AscendCAutoComplete.cpp
+  AscendCBufferizationSimplification.cpp
+  AscendCJustification.cpp
+  ConvertToAscendC.cpp
+  LegalizeFuncForAscendC.cpp
 
   ADDITIONAL_HEADER_DIRS
   ${MLIR_MAIN_INCLUDE_DIR}/mlir/Dialect/AscendC
@@ -14,5 +18,6 @@ add_mlir_dialect_library(MLIRAscendCTransforms
   MLIRIR
   MLIRPass
   MLIRSCFDialect
+  MLIRMemRefDialect
   MLIRTransforms
 )
