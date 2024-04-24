@@ -9,6 +9,7 @@ set(MLIR_ASCENDC_TEST_DEPENDS
   FileCheck count not
   ascendc-mlir-opt
   ascendc-mlir-translate
+  mlir-ascendc-compile
 )
 
 add_lit_testsuite(check-mlir-ascendc "Running the mlir-ascendc regression tests"
